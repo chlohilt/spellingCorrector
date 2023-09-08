@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class SpellCorrector implements ISpellCorrector {
 
-  private Map<String, Integer> dictionary=new HashMap<>();
+  private Trie dictionary=new Trie();
 
   @Override
   public void useDictionary(String dictionaryFileName) throws IOException {
@@ -17,7 +17,12 @@ public class SpellCorrector implements ISpellCorrector {
       var in=new Scanner(myFile);
       while (in.hasNext()) {
         var newString=in.nextLine();
-        dictionary.merge(newString, 1, Integer::sum);
+        if (dictionary.find(newString) != null) {
+          // TODO: add one to count
+        } else {
+          dictionary.add(newString);
+        }
+        ;
       }
     } catch (IOException e) {
       throw new IOException("Incorrect file name. Please try again. " + e);
