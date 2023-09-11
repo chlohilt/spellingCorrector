@@ -21,4 +21,12 @@ public class Node implements INode {
   public Node[] getChildren() {
     return this.children;
   }
+
+  public void addChild(Node newNode, int index) {
+    children[index]=newNode;
+  }
+
+  public Node getChildAt(int i) {
+    return this.children[i];
+  }
 }
