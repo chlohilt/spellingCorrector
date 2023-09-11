@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import com.google.common.collect.Sets;
+
 public class SpellCorrector implements ISpellCorrector {
 
   private Trie dictionary=new Trie();
@@ -19,7 +21,7 @@ public class SpellCorrector implements ISpellCorrector {
         if (dictionary.find(newString) == null) {
           dictionary.add(newString);
         } else {
-          // add one count to the Node at the end
+          dictionary.find(newString).incrementValue();
         }
       }
     } catch (IOException e) {
@@ -35,20 +37,38 @@ public class SpellCorrector implements ISpellCorrector {
       // edit distance of 1
       Set<String> editDistance1=generateSimilarWords(inputWord);
       Iterator<String> itr=editDistance1.iterator();
+
       // case that there is only one in edit dist of 1
-      if (editDistance1.size() == 1) {
+      if (editDistance1.size() == 1 && dictionary.find(String.valueOf(itr)).getValue() >= 1) {
         return editDistance1.iterator().next();
-      } else if (editDistance1.size() == 0) {
-        // case that there are no edit dist of 1
-//        Set<String> editDistance2=null;
-//        while (itr.hasNext()) {
-//          Set<String> setToUnion
-//        }
       } else {
         // case that there are many edit dist 1
-        return mostSimilarWord(editDistance1);
+        if (mostSimilarWord(editDistance1) != null) {
+          return mostSimilarWord(editDistance1);
+        } else { // otherwise none of the edit dist of 1 are in the dictionary
+          Set<String> editDistance2=null;
+          while (itr.hasNext()) {
+            Set<String> editDist2Set=generateSimilarWords(String.valueOf(itr));
+            editDistance2.addAll(editDist2Set);
+          }
+
+          // REPEAT
+          Iterator<String> itr2=editDistance2.iterator();
+          if (editDistance2.size() == 1 && dictionary.find(String.valueOf(itr2)).getValue() >= 1) {
+            return editDistance2.iterator().next();
+          } else {
+            // case that there are many edit dist 1
+            if (mostSimilarWord(editDistance2) != null) {
+              return mostSimilarWord(editDistance2);
+            } else { // otherwise none of the edit dist of 2 are in the dictionary
+              return null;
+            }
+          }
+        }
+        }
       }
     }
+
     return null;
   }
 
@@ -71,11 +91,15 @@ public class SpellCorrector implements ISpellCorrector {
     int highestFrequency=0;
     List<String> multiplePossible=new ArrayList<>();
 
-    //first get what has highest incidence
+    //first get what has the highest incidence
     while (itr.hasNext()) {
       if (dictionary.find(String.valueOf(itr)).getValue() > highestFrequency) {
         highestFrequency=dictionary.find(String.valueOf(itr)).getValue();
       }
+    }
+
+    if (highestFrequency == 0) {
+      return null;
     }
 
     // now get same ones if there are some
