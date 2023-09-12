@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import com.google.common.collect.Sets;
-
 public class SpellCorrector implements ISpellCorrector {
 
   private Trie dictionary=new Trie();
@@ -65,11 +63,8 @@ public class SpellCorrector implements ISpellCorrector {
             }
           }
         }
-        }
       }
     }
-
-    return null;
   }
 
   public Set<String> generateSimilarWords(String inputWord) {

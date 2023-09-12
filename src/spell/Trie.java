@@ -1,12 +1,13 @@
 package spell;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class Trie implements ITrie {
   private Node root=new Node();
-  Set<String> words;
+  Set<String> words=new HashSet<String>();
   private int wordCount=words.size();
-  private int nodeCount;
+  private int nodeCount=1;
 
   @Override
   public void add(String word) {
@@ -21,6 +22,9 @@ public class Trie implements ITrie {
         Node newNode=new Node();
         currentNode.addChild(newNode, index);
         currentNode=newNode;
+        if (i != word.length() - 1) {
+          nodeCount++;
+        }
       } else {
         currentNode=child;
       }
@@ -29,7 +33,7 @@ public class Trie implements ITrie {
         nodeCount++;
       }
     }
-    words.add(word); //TODO this might be wrong check later
+    words.add(word);
   }
 
   @Override
@@ -125,11 +129,12 @@ public class Trie implements ITrie {
 
   @Override
   public int getWordCount() {
-    return wordCount;
+    return words.size();
   }
 
   @Override
   public int getNodeCount() {
     return nodeCount;
   }
+
 }
