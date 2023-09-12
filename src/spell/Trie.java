@@ -1,12 +1,14 @@
 package spell;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class Trie implements ITrie {
   private Node root=new Node();
-  Set<String> words=new HashSet<String>();
-  private int wordCount=words.size();
+  List<String> words=new ArrayList<String>();
+  private int wordCount=0;
   private int nodeCount=1;
 
   @Override
@@ -29,11 +31,23 @@ public class Trie implements ITrie {
         currentNode=child;
       }
 
-      if (i == word.length() - 1) {
+      if (i == word.length() - 1 && child == null) {
         nodeCount++;
       }
     }
-    words.add(word);
+    // check to see if words is already added
+    boolean found=false;
+    for (String wordCheck : words) {
+      if (wordCheck == word) {
+        found=true;
+        break;
+      }
+    }
+
+    if (!found) {
+      words.add(word);
+    }
+    currentNode.incrementValue();
   }
 
   @Override
@@ -48,6 +62,7 @@ public class Trie implements ITrie {
   private void toString_Helper(Node n, StringBuilder currWord, StringBuilder output) {
     if (n.getValue() > 0) {
       output.append(currWord.toString());
+
       output.append("\n");
     }
 
@@ -66,6 +81,19 @@ public class Trie implements ITrie {
 
   @Override
   public Node find(String word) {
+    // check to see if words is there
+    boolean found=false;
+    for (String wordCheck : words) {
+      if (wordCheck == word) {
+        found=true;
+        break;
+      }
+    }
+
+    if (!found) {
+      return null;
+    }
+
     word=word.toLowerCase();
     Node currentNode=root;
 
@@ -78,6 +106,7 @@ public class Trie implements ITrie {
         return null;
       }
     }
+
     return currentNode;
   }
 
@@ -87,10 +116,10 @@ public class Trie implements ITrie {
     for (int i=0; i < root.getChildren().length; ++i) {
       if (root.getChildAt(i) != null) {
         indexFirstNonNullNode=i;
-        return wordCount * nodeCount * indexFirstNonNullNode;
+        return getWordCount() * nodeCount * indexFirstNonNullNode;
       }
     }
-    return wordCount * nodeCount;
+    return getWordCount() * nodeCount;
   }
 
   @Override
@@ -112,7 +141,7 @@ public class Trie implements ITrie {
   }
 
   private boolean equals_Helper(Node n1, Node n2) {
-    // do n1 and n2 have the same count false if fals
+    // do n1 and n2 have the same count false if false
     if (n1.getValue() != n2.getValue()) {
       return false;
     }
@@ -120,8 +149,10 @@ public class Trie implements ITrie {
     for (int i=0; i < n1.getChildren().length; ++i) {
       if ((n1.getChildAt(i) != null && n2.getChildAt(i) == null) || (n1.getChildAt(i) == null && n2.getChildAt(i) != null)) {
         return false;
-      } else {
-        return equals_Helper(n1.getChildAt(i), n2.getChildAt(i));   // recurse on the children and compare child subtrees
+      } else if (n1.getChildAt(i) != null && n2.getChildAt(i) != null) {
+        if (!equals_Helper(n1.getChildAt(i), n2.getChildAt(i))) {
+          return false;
+        }  // recurse on the children and compare child subtrees
       }
     }
     return true;
