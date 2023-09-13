@@ -15,6 +15,7 @@ public class Trie implements ITrie {
   public void add(String word) {
     word=word.toLowerCase();
     Node currentNode=root;
+    // Node node = find(word); if node!= null, node.increment, else iterate through word
 
     for (int i=0; i < word.length(); ++i) {
       int index=word.charAt(i) - 'a';
@@ -36,17 +37,10 @@ public class Trie implements ITrie {
       }
     }
     // check to see if words is already added
-    boolean found=false;
-    for (String wordCheck : words) {
-      if (wordCheck == word) {
-        found=true;
-        break;
-      }
-    }
-
-    if (!found) {
+    if (!words.contains(word)) {
       words.add(word);
     }
+
     currentNode.incrementValue();
   }
 
@@ -62,7 +56,6 @@ public class Trie implements ITrie {
   private void toString_Helper(Node n, StringBuilder currWord, StringBuilder output) {
     if (n.getValue() > 0) {
       output.append(currWord.toString());
-
       output.append("\n");
     }
 
@@ -83,8 +76,8 @@ public class Trie implements ITrie {
   public Node find(String word) {
     // check to see if words is there
     boolean found=false;
-    for (String wordCheck : words) {
-      if (wordCheck == word) {
+    for (int i=0; i < words.size(); ++i) {
+      if (words.get(i).equals(word)) {
         found=true;
         break;
       }
