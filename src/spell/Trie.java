@@ -7,7 +7,6 @@ import java.util.Set;
 
 public class Trie implements ITrie {
   private Node root=new Node();
-  List<String> words=new ArrayList<String>();
   private int wordCount=0;
   private int nodeCount=1;
 
@@ -25,20 +24,20 @@ public class Trie implements ITrie {
         Node newNode=new Node();
         currentNode.addChild(newNode, index);
         currentNode=newNode;
-        if (i != word.length() - 1) {
+        if (i != word.length() - 1) { // see if this one nee
           nodeCount++;
         }
       } else {
         currentNode=child;
       }
 
-      if (i == word.length() - 1 && child == null) {
+      if (i == word.length() - 1 && child == null) { // see if this one needs to be deleted
         nodeCount++;
       }
     }
     // check to see if words is already added
-    if (!words.contains(word)) {
-      words.add(word);
+    if (currentNode.getValue() == 0) {
+      wordCount++;
     }
 
     currentNode.incrementValue();
@@ -75,17 +74,6 @@ public class Trie implements ITrie {
   @Override
   public Node find(String word) {
     // check to see if words is there
-    boolean found=false;
-    for (int i=0; i < words.size(); ++i) {
-      if (words.get(i).equals(word)) {
-        found=true;
-        break;
-      }
-    }
-
-    if (!found) {
-      return null;
-    }
 
     word=word.toLowerCase();
     Node currentNode=root;
@@ -100,7 +88,12 @@ public class Trie implements ITrie {
       }
     }
 
-    return currentNode;
+    // check to see if words is already added
+    if (currentNode.getValue() == 0) {
+      return null;
+    } else {
+      return currentNode;
+    }
   }
 
   @Override
@@ -153,7 +146,7 @@ public class Trie implements ITrie {
 
   @Override
   public int getWordCount() {
-    return words.size();
+    return wordCount;
   }
 
   @Override

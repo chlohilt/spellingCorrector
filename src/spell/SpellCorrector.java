@@ -123,8 +123,8 @@ public class SpellCorrector implements ISpellCorrector {
       possibleWords.add(inputWord.substring(0, i) + inputWord.charAt(i + 1) + inputWord.charAt(i) + inputWord.substring(i + 2)); // switching the characters
     } else if (i + 1 < inputWord.length()) {
       possibleWords.add(inputWord.substring(0, i) + inputWord.charAt(i + 1) + inputWord.charAt(i)); // switching the characters
-    } else {
-      possibleWords.add(String.valueOf(inputWord.charAt(i) + inputWord.charAt(0)));
+    } else if (i + 1 == inputWord.length() && inputWord.length() != 1) {
+      possibleWords.add(inputWord.substring(0, i - 1) + inputWord.charAt(i) + inputWord.charAt(i - 1));
     }
   }
 
